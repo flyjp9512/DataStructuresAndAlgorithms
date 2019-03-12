@@ -1,45 +1,78 @@
 package com.flyjp.dsaa;
 
 /**
- * 链表
+ * 双端链表
  */
+public class TestFirstLastLinkList {
 
-public class TestLinkList {
     public static void main(String[] args){
-        LinkList linkList = new LinkList();
-        linkList.insertFirst(34);
-        linkList.insertFirst(23);
-        linkList.insertFirst(12);
+        FirstLastLinkList linkList = new FirstLastLinkList();
+//        linkList.insertFirst(34);
+//        linkList.insertFirst(23);
+//        linkList.insertFirst(12);
+//
+//        linkList.display();//12 23 34
+//
+//        linkList.deleteFirst();
+//        linkList.deleteFirst();
+//        linkList.display();// 34
 
-        linkList.display();//12 23 34
+        linkList.insertLast(56);
+        linkList.insertLast(90);
+        linkList.insertLast(12);
+        linkList.display();//56 90 12
 
         linkList.deleteFirst();
-        linkList.display();//23 34
+        linkList.display();//90 12
 
-        Node node = linkList.find(23);
-        node.display();//23
-        linkList.insertFirst(0);
-        linkList.insertFirst(-1);
-        Node node1 = linkList.delete(0);//node1.data = 0;
-        linkList.display();//-1 23 34
+
+
     }
-
 }
 
-class LinkList{
+class FirstLastLinkList{
+
     //头结点
     private Node first;
+    //尾结点
+    private Node last;
 
-    public LinkList(){
+    public FirstLastLinkList(){
         first = null;
     }
+
+
     /**
-     * 插入一个结点，在头结点插入
+     * 判断是否为空
+     *
+     */
+    public boolean isEmpty(){
+        return first == null;
+    }
+
+    /**
+     * 插入一个结点，在头结点进行插入
      */
     public void insertFirst(long value){
         Node node = new Node(value);
+        if(isEmpty()){
+            last = node;//尾结点是新添加的结点
+        }
         node.next = first;//新指针域指向头指针域
         first = node ;//头结点替换新结点
+    }
+
+    /**
+     * 插入一个结点，从尾结点插入
+     */
+    public void insertLast(long value){
+        Node node = new Node(value);
+        if(isEmpty()){
+            first = node;
+        }else{
+            last.next = node;
+        }
+        last = node;//尾结点是新添加的结点
     }
 
     /**
@@ -47,6 +80,9 @@ class LinkList{
      */
     public Node deleteFirst(){
         Node tmp = first;
+        if(first.next == null){//first是最后一个结点的
+            last = null; //尾结点为空
+        }
         first = tmp.next;
         return  tmp;
     }
@@ -84,11 +120,11 @@ class LinkList{
         Node current = first;
         Node previous = first;
         while(current.data != value){
-                if(current.next == null){
-                    return null;
-                }
-                previous = current;
-                current = current.next;
+            if(current.next == null){
+                return null;
+            }
+            previous = current;
+            current = current.next;
         }
         if(current == first){
             first = first.next;
@@ -98,28 +134,3 @@ class LinkList{
         return current;
     }
 }
-
-/**
- * 链结点
- */
-class Node{
-    //数据域
-    public long data;
-    //指针域
-    public Node next;
-    //前指针域
-    public Node previous;
-
-    public Node(long value){
-        this.data = value;
-    }
-
-    /**
-     * 显示方法
-     */
-    public void display(){
-        System.out.print(data + " ");
-    }
-
-}
-
