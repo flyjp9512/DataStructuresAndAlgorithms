@@ -27,17 +27,20 @@ public class TestTree {
         tree.insert(3,"D");
         tree.insert(4,"E");
         tree.insert(90,"F");
-        System.out.println(tree.root.leftChild.data);//3
-
-        System.out.println(tree.find(3).str);//D
-        //前序遍历
-        tree.frontOrder(tree.root);//10 3 4 20 15 90
+//        System.out.println(tree.root.leftChild.data);//3
+//
+//        System.out.println(tree.find(3).str);//D
+//        //前序遍历
+//        tree.frontOrder(tree.root);//10 3 4 20 15 90
+//        System.out.println("-----------");
+//        //中序遍历
+//        tree.inOrder(tree.root);//3 4 10 15 20 90
+//        System.out.println("-----------");
+//        //后序遍历
+//        tree.afterOrder(tree.root);//4 3 15 90 20 10
         System.out.println("-----------");
-        //中序遍历
-        tree.inOrder(tree.root);//3 4 10 15 20 90
-        System.out.println("-----------");
-        //后序遍历
-        tree.afterOrder(tree.root);//4 3 15 90 20 10
+        tree.delete(15);
+        tree.inOrder(tree.root);
 
     }
 }
@@ -125,17 +128,20 @@ class Tree{
         TreeNode parent = root;
         //是否为左节点
         boolean isLeftChild = true;
-        while(current.data != value){
-            if(current.data > value){
+        while(current.data != value) {
+            parent = current;
+            if (current.data > value) {
                 current = current.leftChild;
                 isLeftChild = true;
-            }else{
+            } else {
                 current = current.rightChild;
                 isLeftChild = false;
             }
             if(current == null){
                 return  false;
-            }else{
+            }
+        }
+
                 //删除叶子节点，也就是该节点没有子节点
                 if(current.leftChild == null && current.rightChild == null){
                     //如果删除节点是根节点 为null
@@ -148,38 +154,44 @@ class Tree{
                     }
                     return true;
                     //只有一个子节点，改变父节点的引用，将其直接指向要删除节点的子节点
-                }else if(current.leftChild == null || current.rightChild == null){
+                }else if(current.rightChild == null){
                     if(current == root){
-                        root = current.leftChild!=null?
-                                current.leftChild:current.rightChild;
-                    } else if(isLeftChild){
-                        parent.leftChild = current.leftChild!=null?
-                                current.leftChild:current.rightChild;
+                        root = current.leftChild;
+                    }else if(isLeftChild){
+                        parent.leftChild = current.leftChild;
                     }else{
-                        parent.rightChild = current.leftChild!=null?
-                                current.leftChild:current.rightChild;
+                        parent.rightChild = current.leftChild;
+                    }
+                    return true;
+                }else if(current.leftChild == null){
+                    if(current == root){
+                        root = current.rightChild;
+                    }else if(isLeftChild){
+                        parent.leftChild = current.rightChild;
+                    }else{
+                        parent.rightChild = current.rightChild;
                     }
                 }else{
+                    //获得删除节点的中序后继节点的子树
                     TreeNode successor = getSuccessor(current);
                     if(current == root){
                         root = successor;
                     }else if(isLeftChild){
-                        parent.leftChild = successor;
+                        parent.leftChild = successor;//第三步：删除节点替换成中序后继子树
                     }else{
-                        parent.rightChild = successor;
+                        parent.rightChild = successor;//第三步：删除节点替换成中序后继子树
                     }
-                    successor.leftChild = current.leftChild;
+                    successor.leftChild = current.leftChild;//第四步：中序后继的做节点哟换成删除节点的左子树
+                    return true;
                 }
 
-            }
 
-        }
         return false;
     }
 
 
     /**
-     * 中序后继节点
+     * 中序后继节点 删除节点的下一个值
      */
     public TreeNode getSuccessor(TreeNode delNode){
         TreeNode successor = delNode;
@@ -191,8 +203,9 @@ class Tree{
             current = current.leftChild;
         }
         if(successor != delNode.rightChild){
-            //把中序后继节点等于
+            //第一步：中序后继节点的位置替换成中序后继节点的右子树
             successorParent.leftChild = successor.rightChild;
+            //第二步：中序后继节点的右子树替换成删除节点右子树
             successor.rightChild = delNode.rightChild;
         }
         return successor;
